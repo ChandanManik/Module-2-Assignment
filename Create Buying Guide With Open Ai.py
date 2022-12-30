@@ -1,8 +1,7 @@
-import openai
 import base64
 import requests
 
-openai.api_key = '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'
+
 
 def wph2(text):
     code = f'<!-- wp:heading --><h2>{text}</h2><!-- /wp:heading -->'
@@ -13,6 +12,11 @@ def wpara(text):
     return code
 
 def ai_ans(prompt):
+    import os
+    from dotenv import load_dotenv
+    load_dotenv()
+    import openai
+    openai.api_key = os.getenv('API_KEY')
     response = openai.Completion.create(
         model="text-davinci-003",
         prompt= prompt,
@@ -26,13 +30,11 @@ def ai_ans(prompt):
     return output
 
 keyword = input("Enter your Key: ")
-prompt = f'write two questions about {keyword}'
+prompt = f'write four questions about {keyword}'
 content = wpara(ai_ans(f'write short intro about {keyword}').strip().strip('\n')) 
 questions = ai_ans(prompt)
 ques_list = questions.strip().split('\n')
 endline = 'write a paragraph about it'
-conclu = wph2('Conclusion')
-para = wpara(ai_ans(f'write short conclusion about {conclu}'))
 
 
 qs = {}
@@ -42,13 +44,6 @@ for qr in ques_list:
     qs[qr] = answers
 
 
-
-
-    # answers = ai_ans(output).strip().strip('\n')
-    # qs[output] = answers
-
-
-#content = f'write short intro about {keyword}'
 user = 'manik'
 seckey = 'vzCG iG6C ewBN K2fF tSB4 eoca' 
 credential = f'{user}:{seckey}'
@@ -74,7 +69,7 @@ for key, value in qs.items():
 print(content)
 
 
-# api_url = 'https://testsite.local/wp-json/wp/v2/posts'
-# r = requests.post(api_url, data = data, headers=headers, verify = False)
-# print(r.json())
+api_url = 'https://testsite.local/wp-json/wp/v2/posts'
+r = requests.post(api_url, data = data, headers=headers, verify = False)
+print(r.json())
 
